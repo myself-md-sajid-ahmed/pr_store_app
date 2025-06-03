@@ -60,6 +60,7 @@ class AuthController{
 }
 
 //signin users funcitons
+
 Future<void> signInUsers(
       {
         required context,
@@ -68,7 +69,7 @@ Future<void> signInUsers(
 })async{
     try{
       //jason dot encode and this will convert the map we are about to have into JSON string
-      http.Response response=await http.post(Uri.parse("$Uri/api/signin"),body:jsonEncode({
+      http.Response response=await http.post(Uri.parse('$uri/api/signin'),body:jsonEncode({
         'email':email,//include the email in the request body,
         'password':password,//include the password in the request body,
       },
