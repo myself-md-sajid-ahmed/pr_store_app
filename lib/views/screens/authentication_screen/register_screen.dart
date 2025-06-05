@@ -5,7 +5,12 @@ import 'package:pr_store_app/controllers/auth_controller.dart';
 
 import 'login_screen.dart';
 
-class RegisterScreen extends StatelessWidget {
+class RegisterScreen extends StatefulWidget {
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
   //const RegisterScreen({super.key});
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -13,10 +18,31 @@ class RegisterScreen extends StatelessWidget {
   final AuthController _authController=AuthController();
 
   //first we can create a variable to store the email.
-  //using the late keyword to simply say the value will be assigned to the variable later.
   late String email;
+
   late String fullName;
+
   late String password;
+
+  bool _isLoading=false;
+
+  registerUser()async{
+    setState((){
+      _isLoading=true;
+    });
+    await _authController.signUpUsers(
+      context: context,
+      email: email,
+      fullName: fullName,
+      password: password,
+    ).whenComplete((){
+      //one thing we can also do is we can clear the test form fields.
+      // _formKey.currentState!.reset();
+      setState(() {
+        _isLoading=false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -210,7 +236,7 @@ class RegisterScreen extends StatelessWidget {
                   const SizedBox(height: 20),
 
                   InkWell(
-                    onTap: () async {
+                    onTap: ()  {
                       if (_formKey.currentState!.validate()) {
                         //   // Form is valid, perform registration logic here
                         print("Form is valid");
@@ -220,12 +246,14 @@ class RegisterScreen extends StatelessWidget {
                         print(fullName);
                         print(password);
 
-                        await _authController.signUpUsers(
-                          context: context,
-                          email: email,
-                          fullName: fullName,
-                          password: password,
-                        );
+                        // await _authController.signUpUsers(
+                        //   context: context,
+                        //   email: email,
+                        //   fullName: fullName,
+                        //   password: password,
+                        // );
+                      registerUser();
+
                       } else {
                         print("Form is not valid");
                       }
@@ -317,7 +345,7 @@ class RegisterScreen extends StatelessWidget {
                           ),
 
                           Center(
-                            child: Text(
+                            child: _isLoading ? const CircularProgressIndicator(color:Colors.white,): Text(
                               "Sign Up",
                               style: GoogleFonts.getFont(
                                 'Lato',

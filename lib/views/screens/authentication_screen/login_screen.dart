@@ -22,6 +22,21 @@ class _LoginScreenState extends State<LoginScreen>{
   //we have to create a variable to store the auth controller class.
   //Because we want to make use of the sign in users function.
   final AuthController _authController=AuthController();
+
+  bool isLoading=false;
+  loginUser()async{
+    setState(() {
+      isLoading=true;
+    });
+    await _authController.signInUsers(
+        context: context, email: email, password: password)
+        .whenComplete((){
+          // _formKey.currentState!.reset();
+        setState((){
+          isLoading=false;
+        });
+      });
+  }
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -163,10 +178,12 @@ class _LoginScreenState extends State<LoginScreen>{
                   const SizedBox(height: 20),
             
                   InkWell(
-                    onTap: () async{
+                    //async use kora hossilo age. karon tokhn await ar kaj ta ar moddhe kora hossilo.
+                    onTap: () {
                       if (_formKey.currentState!.validate()) {
 
-                        await _authController.signInUsers(context: context, email: email, password: password);
+                        loginUser();
+
 
 
                         // Form is valid, perform registration logic here
@@ -264,7 +281,7 @@ class _LoginScreenState extends State<LoginScreen>{
                           ),
             
                           Center(
-                            child: Text(
+                            child: isLoading ? const CircularProgressIndicator(color:Colors.white,): Text(
                               "Sign in",
                               style: GoogleFonts.getFont(
                                 'Lato',
